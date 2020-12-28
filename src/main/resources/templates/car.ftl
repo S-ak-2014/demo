@@ -1,58 +1,99 @@
 <#import "/spring.ftl" as spring>
 
+<body ng-app="myApp" ng-controller="MainController">
+<div id="content">
 
-<div class="myDiv">
-    <div class="row">
-        <div class="form-group has-success">
-            <label>Car Make</label>
-            <input type="text" class="form-control" ng-model="make"><br><br>
-        </div>
-    </div>
-    <div class="row">
-        <div class="form-group has success">
-            <label>Car Model</label>
-            <input type="text" class="form-control" ng-model="model"><br><br>
-        </div>
-    </div>
-    <div class="row">
-        <button ng-click="carList()" type="button" class="btn btn-outline btn-primary btn-xs">
-            Car List
-        </button>
-    </div>
-</div>
-<div class="list-view">
-    <div class="form-group on-success">
-        <table class="datatable">
+    <form name = "carForm" ng-submit = "submitCar()">
+        <table>
             <tr>
                 <th>Make</th>
-                <th>Model</th>
+                <td><input type="text" ng-model="carForm.carMake"/></td>
             </tr>
-            <#list carList as carlist>
-                <tr>
-                    <td>${carlist.make}</td>
-                    <td>${carlist.model}</td>
-                </tr>
-            </#list>
+            <tr>
+                <th>Model</th>
+                <td><input type="text" ng-model="carForm.carModel"/></td>
+            </tr> <br><br>
+            <tr>
+                <td colspan="2"><input type="submit" value="Submit" class="blue-button"/> </td>
+            </tr>
         </table>
-    </div>
+    </form>
+    <table class="datatable">
+        <tr>
+            <th>Make</th>
+            <th>Model</th>
+        </tr>
+
+        <#list car as carMake, carModel>
+            <tr>
+                <td>${carMake}</td>
+                <td>${carModel}</td>
+            </tr>
+        </#list>
+    </table>
+
 </div>
-
-<style>
-    .myDiv {
-        padding-left: 50px;
-        padding-top: 20px;
-        border : 2px black;
-        background-color : aliceblue;
-    }
-</style>
-
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-sanitize.js"></script>
+</body>
 <script>
-    var make;
-    var model;
+    var app = angular.module("myApp", []);
 
-    function carList() {
-        carlist.make = make;
-        carlist.model = model;
-    }
+    app.controller("MainController", function($scope, $http){
+        $scope.cars =[];
+        $scope.carForm = {
+            id : -1,
+            carMake : "",
+            carModel : ""
+        };
+
+        _refreshCarData();
+
+        $scope.submitCar = function() {
+            var method = "";
+            var url = "";
+
+            if($scope.carForm.id == -1) {
+                method = "POST";
+                url = '/car';
+            }
+            else {
+                method = "PUT";
+                url = '/car';
+            }
+
+            $http({
+                method : method,
+                url : url,
+                data : angular.toJson($scope.carForm),
+                header : {
+                    'Content-Type' : 'application/json'
+                }
+            }).then(_success, _error);
+        };
+
+        function _refreshCarData() {
+            $http({
+                method : 'GET',
+                url : 'http://localhost:8080/car'
+            }).then(function successCallBack(response) {
+                $scope.car = response.data;
+            }, function errorCallBack(response) {
+                console.log(response.statusText);
+            });
+        }
+
+        function _success(response) {
+            _refreshCarData();
+            _clearFormData()
+        }
+
+        function _error() {
+            console.log(response.statusText)
+        }
+
+        function _clearFormData() {
+            $scope.carForm.id = -1;
+            $scope.carForm.carMake = "";
+            $scope.carForm.carModel = "";
+        };
+    });
 </script>
