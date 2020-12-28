@@ -48,21 +48,10 @@
         _refreshCarData();
 
         $scope.submitCar = function() {
-            var method = "";
-            var url = "";
-
-            if($scope.carForm.id == -1) {
-                method = "POST";
-                url = '/car';
-            }
-            else {
-                method = "PUT";
-                url = '/car';
-            }
 
             $http({
-                method : method,
-                url : url,
+                method : 'POST',
+                url : '/cars',
                 data : angular.toJson($scope.carForm),
                 header : {
                     'Content-Type' : 'application/json'
@@ -73,7 +62,7 @@
         function _refreshCarData() {
             $http({
                 method : 'GET',
-                url : 'http://localhost:8080/car'
+                url : 'http://localhost:8080/cars'
             }).then(function successCallBack(response) {
                 $scope.car = response.data;
             }, function errorCallBack(response) {
