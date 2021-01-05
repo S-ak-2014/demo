@@ -1,45 +1,16 @@
 package com.example.demo.bean;
 
-import org.springframework.context.annotation.ComponentScan;
+import lombok.*;
 
-@ComponentScan
-public class Car{
+import java.io.Serializable;
+import java.util.List;
 
-    int id;
-    String carMake;
-    String carModel;
-
-    public Car() {
-        super();
-    }
-    public Car(int id, String carMake,String carModel) {
-        super();
-        this.id = id;
-        this.carMake = carMake;
-        this.carModel=carModel;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getCarMake() {
-        return carMake;
-    }
-
-    public void setCarMake(String carMake) {
-        this.carMake = carMake;
-    }
-
-    public String getCarModel() {
-        return carModel;
-    }
-
-    public void setCarModel(String carModel) {
-        this.carModel = carModel;
-    }
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+public class Car implements Serializable {
+    private String carMake;
+    private String carModel;
 }
