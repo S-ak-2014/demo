@@ -1,21 +1,25 @@
 package com.example.demo.controller;
 
 import com.example.demo.bean.Car;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Controller
+@EnableAutoConfiguration
 public class MainController {
 
-    // Look-up why the data is getting added on every refresh from the end, the site should load the given data only once
-    List<Car> carList = new ArrayList<>();
+    public MainController() {
+        initializeCarList();
+    }
 
-    public List<Car> getList() {
+    final List<Car> carList = new ArrayList<>();
+
+    private List<Car> initializeCarList() {
 
         carList.add(new Car("Ford", "Mustang"));
         carList.add(new Car("Ford", "Boss 429"));
@@ -28,15 +32,16 @@ public class MainController {
 
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public String viewCarList(ModelMap model) {
-        model.addAttribute("carList",getList());
+    @RequestMapping(method = RequestMethod.POST)
+    public String addCarList(@RequestBody Car newCar, @ModelAttribute ModelMap modelMap) {
+        carList.add(newCar);
+        modelMap.addAttribute("carList", carList);
         return "/car";
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public String addCarList(ModelMap model) {
-        model.addAttribute("carList",getList());
+    @RequestMapping(method = RequestMethod.GET)
+    public String viewCarList(ModelMap model) {
+        model.addAttribute("carList", carList);
         return "/car";
     }
 

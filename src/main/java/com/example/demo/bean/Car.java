@@ -3,7 +3,6 @@ package com.example.demo.bean;
 import lombok.*;
 
 import java.io.Serializable;
-import java.util.List;
 
 @Getter
 @Setter
@@ -11,6 +10,6 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 public class Car implements Serializable {
-    private String carMake;
+    private String carMaker;
     private String carModel;
 }

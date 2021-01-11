@@ -1,34 +1,44 @@
 <#import "/spring.ftl" as spring>
-
-<body ng-app="demo" ng-controller="MainController">
+<head>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular-sanitize.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+</head>
+<body ng-app="myApp" ng-controller="MainController">
 <div id="content" class="form-group has-success">
 
-    <form>
-        <table border="1">
-            <tr>
-                <th bgcolor="#ffefd5">Make</th>
-                <td><input type="text" class="form-control" ng-model="carMake"/></td>
-            </tr>
-            <tr>
-                <th bgcolor="#ffefd5">Model</th>
-                <td><input type="text" class="form-control" ng-model="carModel"/></td>
-            </tr> <br><br>
-        </table>
-        <button type="button" ng-click="submitCar(carMake, carModel)">Submit</button>
-    </form>
-    <table border="1" class="table table-stripped" style="border: 2px solid black" >
-        <tr bgcolor="aqua">
-            <th width="250px">Make</th>
-            <th width="250px">Model</th>
-        </tr>
+    <div class="container">
 
-        <#list carList as cars>
-            <tr>
-                <td>${cars.carMake}</td>
-                <td>${cars.carModel}</td>
+        <form name="carForm" class="form-group has-success">
+            <table>
+                <tr>
+                    <th>Maker</th>
+                    <td><input type="text" name="carMaker" data-ng-model="carMaker" required></td>
+                </tr>
+                <tr>
+                    <th>Model</th>
+                    <td><input type="text" name="carModel" data-ng-model="carModel" required></td>
+                </tr>
+            </table>
+            <button type="button" ng-disabled="carForm.$invalid" ng-click="submitCar(carMaker, carModel)">SUBMIT</button>
+        </form>
+
+        <br><br>
+
+        <table border="1" class="table table-stripped" style="border: 2px solid black" >
+            <tr bgcolor="aqua">
+                <th width="250px">Maker</th>
+                <th width="250px">Model</th>
             </tr>
-        </#list>
-    </table>
+
+            <#list carList as cars>
+                <tr>
+                    <td>${cars.carMaker}</td>
+                    <td>${cars.carModel}</td>
+                </tr>
+            </#list>
+        </table>
+
+    </div>
 
 </div>
 </body>
@@ -37,39 +47,39 @@
     button {
         background-color: cornflowerblue;
     }
+
+    .table tr:nth-child(even) {
+        background-color: lightgrey;
+    }
+
 </style>
 
-<!--Work on the submitCar function to get the data listed in the carList-->
 <script>
 
-    var app = angular.module("demo", []);
+    var app = angular.module("myApp", []);
 
     app.controller("MainController", function ($scope, $http) {
 
         var carList = {
-            carMake : "",
+            carMaker : "",
             carModel : ""
-        }
-        $scope.submitCar = function(carMake, carModel) {
+        };
 
-            alert("Are you sure that you want to add car?")
+        $scope.submitCar = function (carMaker, carModel) {
+            alert("Do you want to add Car?");
 
-            var data = {};
-
-            carList.carMake = carMake;
+            carList.carMaker = carMaker;
             carList.carModel = carModel;
 
             $http({
-               method : 'POST',
-               url : "/",
-               data : data
-            }).success(function(response) {
+                method : 'POST',
+                url : "/",
+                data : carList
+            }).success(function (response) {
                 $scope.processing = true;
                 response.data = carList;
+                location.reload();
             });
-
-        }
-
-    })
-
+        };
+    });
 </script>
